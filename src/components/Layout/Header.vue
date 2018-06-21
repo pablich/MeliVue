@@ -24,7 +24,9 @@ nav.navbar(role="navigation", aria-label="main navigation")
                       a.button.is-primary(@click="search") Buscar
       .navbar-end
           router-link.navbar-item(to="/") Home
-          router-link.navbar-item(to="/about")  Acerca 
+          router-link.navbar-item(to="/cart")
+              span.icon.is-small
+                i.mdi.mdi-cart.badge(:data-badge="wishlist.length")
 </template>
 
 <script>
@@ -34,6 +36,11 @@ export default {
     return {
       searchQuery: '',
     };
+  },
+  computed: {
+    wishlist() {
+      return this.$store.state.cart.list;
+    },
   },
   methods: {
     search() {
@@ -45,6 +52,23 @@ export default {
 </script>
 
 <style>
+.mdi {
+  font-size: 1.3rem;
+}
+.badge[data-badge]::after {
+    position: absolute;
+    left: 100%;
+    margin: 0;
+    background: #35495c;
+    background-clip: padding-box;
+    border-radius: 1rem;
+    -webkit-box-shadow: 0 0 0 0.1rem #fff;
+    box-shadow: 0 0 0 0.1rem #fff;
+    color: #fff;
+    content: attr(data-badge);
+    display: inline-block;
+    font-weight: bold;
+}
 .navbar {
   background-color: #4e9a79;
 }

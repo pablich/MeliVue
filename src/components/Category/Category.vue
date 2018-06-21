@@ -1,40 +1,33 @@
 <template lang="pug">
-    .card(@click="goToSubCategory(Category.id)",v-if="Category.total_items_in_this_category")
+    .card(@click="goToSubCategory(category.id)",v-if="category")
       .card-content
         .media
           .media-left
             figure.image.is-48x48
-              img(:src="Category.picture")
+              img(:src="category.picture")
           .media-content
-            p.title.is-6 {{Category.name}}
-            p.subtitle.is-6 Total de Articulos: {{Category.total_items_in_this_category}}
-
+            p.title.is-6 {{category.name}}
+            p.subtitle.is-6 Total de Articulos: {{category.total_items_in_this_category}}
 </template>
-
 <script>
-import axios from 'axios';
-
 export default {
   name: 'Category',
   props: ['categoryId'],
   data() {
     return {
-      Category: {},
+      category: null,
     };
   },
   created() {
-    const a = this.categoryId;
-    axios.get(`https://api.mercadolibre.com/categories/${a}`).then((response) => {
-      this.Category = response.data;
-    });
+    this.$store.dispatch('GET_CATEGORY', this.categoryId).then((response) => { this.category = response; });
   },
   methods: {
     goToSubCategory(id) {
-      if (this.Category.children_categories.length === 0) {
+      if (this.category.children_categories.length === 0) {
+        this.$store.dispatch('SET_CATEGORY', this.category);
         this.$router.push({ name: 'productList', params: { id } });
-        this.$store.commit('setCategory', this.Category);
       } else {
-        this.$router.push({ name: 'subCategoryList', params: { id } });
+        this.$router.push({ name: 'CategoryList', params: { id } });
       }
     },
   },

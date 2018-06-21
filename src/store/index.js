@@ -1,21 +1,16 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import categoryGetters from './getters';
-import categoryMutations from './mutations';
+import products from './modules/products';
+import cart from './modules/cart';
+import shared from './modules/shared';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   strict: true,
-  state: {
-    cart: [],
-    showLoader: false,
-    product: {},
-    products: [],
-    category: {},
-    categories: {},
+  modules: {
+    products,
+    cart,
+    shared,
   },
-  // GETTERS
-  getters: Object.assign({}, categoryGetters),
-  mutations: Object.assign({}, categoryMutations),
 });

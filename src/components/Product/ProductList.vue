@@ -6,70 +6,77 @@
           a(@click="goToCategory(breadcrumb.id)") {{breadcrumb.name}}
    .container
       .columns.is-multiline
-          template(v-for="product in products")
-            div.column.is-8
-              .card(@click="goToProduct(product.id)")
+            .column.is-4
+              .card
                 .card-content
-                    .media
-                        .media-left
-                            figure.image.is-128x128
-                                img(:src="product.thumbnail")
-                        .media-content
-                            p.title.is-6 {{product.title}}
-                            p.subtitle.is-6 $ {{product.price}}
-                            p.subtitle.is-6(v-if="product.shipping.free_shipping") Envío gratis a todo el país
-                            p.subtitle.is-6(v-else) Envío a todo el país
-                            p.subtitle.is-6 {{product.sold_quantity}} Vendidos | {{product.address.state_name}} - {{product.address.city_name}}
+                  h2 Filtros
+                  hr
+                  .columns(v-for='filter in filters')
+                    .column
+                      label.bold {{ filter.name }}
+                      ul
+                        li(v-for='value in filter.values')
+                          a {{ value.name}}
+            .column.is-8
+              .columns(v-for="product in products")
+                .column
+                  .card
+                    .card-content
+                        .media
+                            .media-left
+                                figure.image.is-128x128
+                                    img(:src="product.thumbnail")
+                            .media-content
+                                p.title.is-6(@click="goToProduct(product.id)") {{product.title}}
+                                p.subtitle.is-6 $ {{product.price}}
+                                p.subtitle.is-6(v-if="product.shipping.free_shipping") Envío gratis a todo el país
+                                p.subtitle.is-6(v-else) Envío a todo el país
+                                p.subtitle.is-6 {{product.sold_quantity}} Vendidos | {{product.address.state_name}} - {{product.address.city_name}}
+                                button.button.is-primary(v-if="!checkExist(product.id)", @click="addToCart(product)") Añadir al carro
+                                button.button.is-danger(v-if="checkExist(product.id)", @click="removeFromCart(product.id)") Eliminar del carro
 </template>
 
 <script>
-import axios from 'axios';
+import { mapState } from 'vuex';
 
 export default {
   name: 'ProductList',
-  data() {
-    return {
-      products: [],
-    };
-  },
-  computed: {
-    breadcrumbs() {
-      const category = this.$store.getters.categoryById(this.$route.params.id);
-      return category.path_from_root;
-    },
-  },
+  computed: mapState({
+    breadcrumbs: state => state.products.breadcrumbs,
+    products: state => state.products.products,
+    filters: state => state.products.filters,
+  }),
   created() {
-    const categoryId = this.$route.params.id;
-    if (!this.breadcrumbs) {
-      axios.get(`https://api.mercadolibre.com/categories/${categoryId}`).then((response) => {
-        this.$store.commit('setCategory', response.data);
-      });
-    }
     if (this.$route.name === 'productList') {
-      axios.get(`https://api.mercadolibre.com/sites/MLA/search?category=${categoryId}`).then((response) => {
-        this.products = response.data.results;
-      });
+      this.$store.dispatch('GET_PRODUCTS', this.$route.params.id);
+      this.$store.dispatch('GET_SUBCATEGORIES', this.$route.params.id);
     } else {
-      axios.get(`https://api.mercadolibre.com/sites/MLA/search?q=${categoryId}`).then((response) => {
-        this.products = response.data.results;
-      });
+      this.$store.dispatch('SEARCH_PRODUCTS', this.$route.params.id);
     }
   },
   methods: {
+    checkExist(product) {
+      return this.$store.getters.checkExist(product);
+    },
+    addToCart(product) {
+      this.$store.dispatch('ADD_PRODUCT', product);
+    },
+    removeFromCart(product) {
+      this.$store.dispatch('REMOVE_PRODUCT', product);
+    },
     goToProduct(id) {
       this.$router.push({ name: 'product', params: { id } });
     },
     goToCategory(id) {
-      axios.get(`https://api.mercadolibre.com/categories/${id}`).then((response) => {
+      this.$store.dispatch('GET_CATEGORY', id).then(() => {
         this.$router.push({ name: 'productList', params: { id } });
-        this.$store.commit('setCategory', response.data);
       });
     },
   },
 };
 </script>
-<style>
-.card:hover {
+<style scoped>
+.column.is-9 .card:hover {
     background-color: #f5f2e2;
     cursor: pointer
 }
@@ -82,5 +89,13 @@ export default {
 }
 .breadcrumb a {
     color: #fff;
+}
+label.bold {
+    font-size: 1rem;
+    margin: 0;
+}
+.column ul li {
+    font-size: 0.8rem;
+    font-weight: 300;
 }
 </style>

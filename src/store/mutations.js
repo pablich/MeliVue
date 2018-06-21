@@ -1,7 +1,12 @@
-const categoryMutations = {
-  setCategory(state, category) {
-    state.category = category;
-  },
-};
-
-export default categoryMutations;
+// SHARED
+export const LOADER = 'LOADER';
+export const READY = 'READY';
+// PRODUCTS
+export const SET_CATEGORY = 'SET_CATEGORY';
+export const SET_CATEGORIES = 'SET_CATEGORIES';
+export const SET_SUBCATEGORIES = 'SET_SUBCATEGORIES';
+export const SET_BREADCRUMBS = 'SET_BREADCRUMBS';
+export const SET_PRODUCTS = 'SET_PRODUCTS';
+export const SET_FILTERS = 'SET_FILTERS';
+export const ADD_TO_CART = 'ADD_TO_CART';
+export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';

@@ -1,5 +1,6 @@
 import Home from './../pages/Home.vue';
-import SubCategoryList from './../components/Category/SubCategoryList.vue';
+import Cart from './../pages/Cart.vue';
+import CategoryList from './../components/Category/CategoryList.vue';
 import ProductList from './../components/Product/ProductList.vue';
 import Product from './../components/Product/Product.vue';
 
@@ -10,9 +11,14 @@ const routes = [
     name: 'home',
   },
   {
+    path: '/cart',
+    component: Cart,
+    name: 'cart',
+  },
+  {
     path: '/:id',
-    component: SubCategoryList,
-    name: 'subCategoryList',
+    component: CategoryList,
+    name: 'CategoryList',
   },
   {
     path: '/category/:id',
