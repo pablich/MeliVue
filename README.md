@@ -1,6 +1,8 @@
 # melivue
 
-> Mercado Libre with Vuejs
+> Demo para la BeerJS Córdoba
+
+> Sumate a la communidad — [BeerJs](https://beerjscba.herokuapp.com/)
 
 ## Build Setup
 
